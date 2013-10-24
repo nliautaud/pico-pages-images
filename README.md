@@ -10,7 +10,7 @@ Copy `pico_pages_images.php` to the `plugins/` directory of your Pico Project.
 
 Loop trough the Twig `images` variable in your theme, or access to an image directly.
 
-```twig
+```html
 {% for image in images %}
 	<img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
 {% endfor %}
