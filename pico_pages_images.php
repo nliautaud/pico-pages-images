@@ -54,12 +54,12 @@ class Pico_Pages_Images
 
 		foreach ($images as $path)
 		{
-			list($dirname, $basename, $ext, $filename) = array_values(pathinfo($path));
+			list(, $basename, $ext, $filename) = array_values(pathinfo($path));
 			list($width, $height, $type, $size, $mime) = getimagesize($path);
 
 			$data[] = array (
 				'url' => $base_url . '/content/' . $this->path . $basename,
-				'path' => $dirname,
+				'path' => $this->path,
 				'name' => $filename,
 				'ext' => $ext,
 				'width' => $width,

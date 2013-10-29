@@ -34,7 +34,7 @@ The images are nicely stored next to the page file, or in a folder using the sam
 The images contains the following data :
 
 	image.url		:	http://mysite.com/page/image.jpg
-	image.path	 	:	page/image.jpg
+	image.path	 	:	page/
 	image.name	 	:	image
 	image.ext		:	jpg
 	image.width	 	:	800
