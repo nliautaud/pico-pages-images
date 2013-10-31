@@ -10,6 +10,7 @@
 class Pico_Pages_Images
 {
 	private $path;
+	private $root;
 
 	// Pico hooks ---------------
 
@@ -19,6 +20,12 @@ class Pico_Pages_Images
 	public function request_url(&$url)
 	{
 		$this->path = $this->format($url);
+	}
+	public function config_loaded(&$settings)
+	{
+		if( !empty($settings['images_path']) )
+			$this->root = $this->format($settings['images_path']);
+		else $this->root = 'content/';
 	}
 
 	/**
@@ -33,13 +40,15 @@ class Pico_Pages_Images
 	// CORE ---------------
 
 	/**
-	 * Return the images path based on the given path.
+	 * Format given path. Remove trailing 'index' and add trailing slash if missing.
 	 */
 	private function format($path)
 	{
+		if( !$path ) return;
+
 		$is_index = strripos($path, 'index') === strlen($path)-5;
-		if($is_index) return substr($path, 0, -5);
-		elseif($path) $path .= '/';
+		if( $is_index ) return substr($path, 0, -5);
+		elseif( substr($path, -1) != '/' ) $path .= '/';
 
 		return $path;
 	}
@@ -48,18 +57,20 @@ class Pico_Pages_Images
 	 */
 	private function images_list($base_url)
 	{
+		$images_path = $this->root . $this->path;
+
 		$data = array();
 		$pattern = '*.{[jJ][pP][gG],[jJ][pP][eE][gG],[pP][nN][gG],[gG][iI][fF]}';
-		$images = glob(CONTENT_DIR . $this->path . $pattern, GLOB_BRACE);
+		$images = glob(ROOT_DIR .'/'. $images_path . $pattern, GLOB_BRACE);
 
-		foreach ($images as $path)
+		foreach( $images as $path )
 		{
 			list(, $basename, $ext, $filename) = array_values(pathinfo($path));
 			list($width, $height, $type, $size, $mime) = getimagesize($path);
 
 			$data[] = array (
-				'url' => $base_url . '/content/' . $this->path . $basename,
-				'path' => $this->path,
+				'url' => $base_url .'/'. $images_path . $basename,
+				'path' => $images_path,
 				'name' => $filename,
 				'ext' => $ext,
 				'width' => $width,
