@@ -15,7 +15,7 @@ final class PicoPagesImages extends AbstractPicoPlugin
     private $base;
     
     /**
-     * This plugin is enabled by default?
+     * This plugin is enabled by default
      *
      * @see AbstractPicoPlugin::$enabled
      * @var boolean
@@ -23,15 +23,22 @@ final class PicoPagesImages extends AbstractPicoPlugin
     protected $enabled = true;
 
     /**
-     * Triggered after Pico has evaluated the request URL
+     * Register page path, relative to Pico content, without index and .md
      *
-     * @see    Pico::getRequestUrl()
-     * @param  string &$url part of the URL describing the requested contents
+     * Triggered after Pico has discovered the content file to serve
+     *
+     * @see    Pico::getBaseUrl()
+     * @see    Pico::getRequestFile()
+     * @param  string &$file absolute path to the content file to serve
      * @return void
      */
-    public function onRequestUrl(&$url)
+    public function onRequestFile(&$file)
     {
-        $this->path = $this->format($url);
+        $this->path = ltrim($file, $this->getPico()->getRootDir());
+        $this->path = ltrim($this->path, 'content');
+        $this->path = rtrim($this->path, 'index.md');
+        $this->path = rtrim($this->path, '.md');
+        $this->path = rtrim($this->path, '/') . '/';
     }
     /**
      * Triggered after Pico has read its configuration
@@ -42,12 +49,11 @@ final class PicoPagesImages extends AbstractPicoPlugin
      */
     public function onConfigLoaded(array &$config)
     {
-        $this->base = $this->format($config['base_url']);
+        $this->base = rtrim($config['base_url'], '/') . '/';
         if (!empty($config['images_path']))
-            $this->root = $this->format($config['images_path']);
-        else $this->root = 'images/';
+            $this->root = rtrim($config['images_path'], '/');
+        else $this->root = 'images';
     }
-    
     /**
      * Triggered before Pico renders the page
      *
@@ -62,26 +68,10 @@ final class PicoPagesImages extends AbstractPicoPlugin
     {
         $twigVariables['images'] = $this->images_list();
     }
-
-
-    // CORE ---------------
-
-
-    /**
-     * Format given path. Remove trailing 'index' and add trailing slash if missing.
-     */
-    private function format($path)
-    {
-        if( !$path ) return;
-
-        $is_index = strripos($path, 'index') === strlen($path)-5;
-        if( $is_index ) return substr($path, 0, -5);
-        elseif( substr($path, -1) != '/' ) $path .= '/';
-
-        return $path;
-    }
     /**
      * Return the list and infos of images in the current directory.
+     *
+     * @return array
      */
     private function images_list()
     {
