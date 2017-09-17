@@ -80,17 +80,18 @@ final class PicoPagesImages extends AbstractPicoPlugin
         $data = array();
         $pattern = '*.{[jJ][pP][gG],[jJ][pP][eE][gG],[pP][nN][gG],[gG][iI][fF]}';
         $images = glob($images_path . $pattern, GLOB_BRACE);
+
+        if (!is_array($images)) return array();
         
         foreach( $images as $path )
         {
-            list(, $basename, $ext, $filename) = array_values(pathinfo($path));
-            list($width, $height, $type, $size, $mime) = getimagesize($path);
-
+            list($width, $height, $type, $size, $mime) = array_pad(getimagesize($path), 5, '');
+            
             $data[] = array (
-                'url' => $this->base . $images_path . $basename,
+                'url' => $this->base . $images_path . pathinfo($path, PATHINFO_BASENAME),
                 'path' => $images_path,
-                'name' => $filename,
-                'ext' => $ext,
+                'name' => pathinfo($path, PATHINFO_FILENAME),
+                'ext' => pathinfo($path, PATHINFO_EXTENSION),
                 'width' => $width,
                 'height' => $height,
                 'size' => $size
