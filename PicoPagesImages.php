@@ -85,7 +85,9 @@ final class PicoPagesImages extends AbstractPicoPlugin
         
         foreach( $images as $path )
         {
-            list($width, $height, $type, $size, $mime) = array_pad(getimagesize($path), 5, '');
+            $imagesize = getimagesize($path);
+            if (!is_array($imagesize)) $imagesize = array();
+            list($width, $height, $type, $size, $mime) = array_pad($imagesize, 5, '');
             
             $data[] = array (
                 'url' => $this->base . $images_path . pathinfo($path, PATHINFO_BASENAME),
