@@ -12,18 +12,9 @@ final class PicoPagesImages extends AbstractPicoPlugin
 {
     private $path;
     private $root;
-    private $base;
-    
-    /**
-     * This plugin is enabled by default
-     *
-     * @see AbstractPicoPlugin::$enabled
-     * @var boolean
-     */
-    protected $enabled = true;
 
     /**
-     * Register page path, relative to Pico content, without index and .md
+     * Register path relative to content without index and extension
      *
      * Triggered after Pico has discovered the content file to serve
      *
@@ -49,7 +40,6 @@ final class PicoPagesImages extends AbstractPicoPlugin
      */
     public function onConfigLoaded(array &$config)
     {
-        $this->base = rtrim($config['base_url'], '/') . '/';
         if (!empty($config['images_path']))
             $this->root = rtrim($config['images_path'], '/');
         else $this->root = 'images';
@@ -88,7 +78,7 @@ final class PicoPagesImages extends AbstractPicoPlugin
             list($width, $height, $type, $size, $mime) = array_pad(getimagesize($path), 5, '');
             
             $data[] = array (
-                'url' => $this->base . $images_path . pathinfo($path, PATHINFO_BASENAME),
+                'url' => $this->getBaseUrl() . $images_path . pathinfo($path, PATHINFO_BASENAME),
                 'path' => $images_path,
                 'name' => pathinfo($path, PATHINFO_FILENAME),
                 'ext' => pathinfo($path, PATHINFO_EXTENSION),
