@@ -8,13 +8,14 @@
  * @link    http://picocms.org
  * @license http://opensource.org/licenses/MIT The MIT License
  */
-final class PicoPagesImages extends AbstractPicoPlugin
+class PicoPagesImages extends AbstractPicoPlugin
 {
-    private $path;
+    private $path = '';
     private $root;
 
     /**
      * Register path relative to content without index and extension
+     * var/html/content/foo/bar.md => foo/bar/
      *
      * Triggered after Pico has discovered the content file to serve
      *
@@ -23,13 +24,17 @@ final class PicoPagesImages extends AbstractPicoPlugin
      * @param  string &$file absolute path to the content file to serve
      * @return void
      */
-    public function onRequestFile(&$file)
+    public function onRequestFile(&$requestFile)
     {
-        $this->path = ltrim($file, $this->getPico()->getRootDir());
-        $this->path = ltrim($this->path, 'content');
-        $this->path = rtrim($this->path, 'index.md');
-        $this->path = rtrim($this->path, '.md');
-        $this->path = rtrim($this->path, '/') . '/';
+        $contentDir = $this->getConfig('content_dir');
+        $contentDirLength = strlen($contentDir);
+        if (substr($requestFile, 0, $contentDirLength) !== $contentDir)
+          return;
+        $contentExt = $this->getConfig('content_ext');
+        $this->path = substr($requestFile, $contentDirLength);
+        $this->path = rtrim($this->path, "index$contentExt");
+        $this->path = rtrim($this->path, $contentExt);
+        if ($this->path) $this->path .= '/';
     }
     /**
      * Triggered after Pico has read its configuration
@@ -41,8 +46,8 @@ final class PicoPagesImages extends AbstractPicoPlugin
     public function onConfigLoaded(array &$config)
     {
         if (!empty($config['images_path']))
-            $this->root = rtrim($config['images_path'], '/');
-        else $this->root = 'images';
+            $this->root = rtrim($config['images_path'], '/') . '/';
+        else $this->root = 'images/';
     }
     /**
      * Triggered before Pico renders the page
@@ -72,11 +77,11 @@ final class PicoPagesImages extends AbstractPicoPlugin
         $images = glob($images_path . $pattern, GLOB_BRACE);
 
         if (!is_array($images)) return array();
-        
+
         foreach( $images as $path )
         {
             list($width, $height, $type, $size, $mime) = array_pad(getimagesize($path), 5, '');
-            
+
             $data[] = array (
                 'url' => $this->getBaseUrl() . $images_path . pathinfo($path, PATHINFO_BASENAME),
                 'path' => $images_path,
