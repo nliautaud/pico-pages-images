@@ -18,12 +18,12 @@ Example of using a loop :
 {% endfor %}
 ```
 
-An image corresponding to the page `http://mysite.com/images/foo/bar` may contain the following data :
+An image corresponding to the page `http://mysite.com/content/foo/bar` may contain the following data :
 
-Data | Exemple
+Data | Example
 ---|---
-`image.url` | http://mysite.com/content/foo/bar/bar-image_01.jpg
-`image.path` | content/foo/bar/
+`image.url` | http://mysite.com/images/foo/bar/bar-image_01.jpg
+`image.path` | images/foo/bar/
 `image.name` | bar-image_01
 `image.ext` | jpg
 `image.width` | 800
