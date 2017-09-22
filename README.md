@@ -18,7 +18,7 @@ Example of using a loop :
 {% endfor %}
 ```
 
-An image corresponding to the page `http://mysite.com/content/foo/bar` may contain the following data :
+An image corresponding to the page `http://mysite.com/foo/bar` may contain the following data :
 
 Data | Example
 ---|---
