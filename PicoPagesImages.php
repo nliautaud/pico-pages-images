@@ -82,7 +82,7 @@ class PicoPagesImages extends AbstractPicoPlugin
         {
             $imagesize = getimagesize($path);
             if (!is_array($imagesize)) $imagesize = array();
-            list($width, $height, $type, $size, $mime) = array_pad($imagesize, 5, '');
+            list($width, $height, $type, $size) = array_pad($imagesize, 4, '');
 
             $data[] = array (
                 'url' => $this->getBaseUrl() . $images_path . pathinfo($path, PATHINFO_BASENAME),
