@@ -45,8 +45,8 @@ Images are listed from a directory reproducting the pages path (in `images/` nex
                 bar-image_01.jpg
                 bar-image_02.gif
 
-You can specify a different location by using the configuration setting `images_path` :
+You can specify a different location in the Pico config file with the setting `images_path` :
 
-```php
-$config['images_path'] = 'images/';
+```yml
+images_path: images/
 ```
