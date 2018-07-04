@@ -1,0 +1,30 @@
+{
+  "name": "nliautaud/pico-pages-images",
+  "type": "pico-plugin",
+  "description": "Get images corresponding to the current page in Pico CMS",
+  "keywords": [ "pico", "picocms", "picocms-plugin", "pico-pages-images"],
+  "homepage": "http://picocms.org/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nicolas Liautaud",
+      "homepage": "https://github.com/nliautaud/pico-pages-images",
+      "role": "Lead Developer"
+    },
+    {
+      "name": "Contributors",
+      "homepage": "https://github.com/nliautaud/pico-pages-images/graphs/contributors"
+    }
+  ],
+  "support": {
+    "docs": "https://github.com/nliautaud/pico-pages-images/blob/master/README.md",
+    "issues": "https://github.com/nliautaud/pico-pages-images/issues",
+    "source": "https://github.com/nliautaud/pico-pages-images"
+  },
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "classmap": [ "PicoPagesImages.php" ]
+  }
+}
