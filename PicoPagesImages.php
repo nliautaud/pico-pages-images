@@ -1,16 +1,16 @@
 <?php
-
 /**
- * Access the images of the current page with {{ images }} in Pico CMS.
+ * Get the images of the current page with {{ images }} in Pico CMS.
  *
- * @author  Nicolas Liautaud
+ * @author  Nicolas Liautaud <contact@nliautaud.fr>
+ * @license http://opensource.org/licenses/MIT The MIT License
  * @link    http://nliautaud.fr
  * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
  */
 class PicoPagesImages extends AbstractPicoPlugin
 {
-    private $path = '';
+    const API_VERSION = 2;
+    private $path;
     private $root;
 
     /**
@@ -19,22 +19,27 @@ class PicoPagesImages extends AbstractPicoPlugin
      *
      * Triggered after Pico has discovered the content file to serve
      *
-     * @see    Pico::getBaseUrl()
-     * @see    Pico::getRequestFile()
-     * @param  string &$file absolute path to the content file to serve
+     * @see Pico::resolveFilePath()
+     * @see Pico::getRequestFile()
+     *
+     * @param string &$file absolute path to the content file to serve
+     *
      * @return void
      */
-    public function onRequestFile(&$requestFile)
+    public function onRequestFile(&$file)
     {
         $contentDir = $this->getConfig('content_dir');
         $contentDirLength = strlen($contentDir);
-        if (substr($requestFile, 0, $contentDirLength) !== $contentDir)
-          return;
+        if (substr($file, 0, $contentDirLength) !== $contentDir) {
+            return;
+        }
         $contentExt = $this->getConfig('content_ext');
-        $this->path = substr($requestFile, $contentDirLength);
+        $this->path = substr($file, $contentDirLength);
         $this->path = rtrim($this->path, "index$contentExt");
         $this->path = rtrim($this->path, $contentExt);
-        if ($this->path) $this->path .= '/';
+        if ($this->path) {
+            $this->path .= '/';
+        }
     }
     /**
      * Triggered after Pico has read its configuration
@@ -45,30 +50,32 @@ class PicoPagesImages extends AbstractPicoPlugin
      */
     public function onConfigLoaded(array &$config)
     {
-        if (!empty($config['images_path']))
+        if (!empty($config['images_path'])) {
             $this->root = rtrim($config['images_path'], '/') . '/';
-        else $this->root = 'images/';
+        } else {
+            $this->root = 'images/';
+        }
     }
     /**
      * Triggered before Pico renders the page
      *
-     * @see    Pico::getTwig()
-     * @see    DummyPlugin::onPageRendered()
-     * @param  Twig_Environment &$twig          twig template engine
-     * @param  array            &$twigVariables template variables
-     * @param  string           &$templateName  file name of the template
+     * @see DummyPlugin::onPageRendered()
+     *
+     * @param string &$templateName  file name of the template
+     * @param array  &$twigVariables template variables
+     *
      * @return void
      */
-    public function onPageRendering(Twig_Environment &$twig, array &$twigVariables, &$templateName)
+    public function onPageRendering(&$templateName, array &$twigVariables)
     {
-        $twigVariables['images'] = $this->images_list();
+        $twigVariables['images'] = $this->getImages();
     }
     /**
      * Return the list and infos of images in the current directory.
      *
      * @return array
      */
-    private function images_list()
+    private function getImages()
     {
         $images_path = $this->root . $this->path;
 
@@ -76,13 +83,16 @@ class PicoPagesImages extends AbstractPicoPlugin
         $pattern = '*.{[jJ][pP][gG],[jJ][pP][eE][gG],[pP][nN][gG],[gG][iI][fF]}';
         $images = glob($images_path . $pattern, GLOB_BRACE);
 
-        if (!is_array($images)) return array();
+        if (!is_array($images)) {
+            return array();
+        }
 
-        foreach( $images as $path )
-        {
+        foreach ($images as $path) {
             $imagesize = getimagesize($path);
-            if (!is_array($imagesize)) $imagesize = array();
-            list($width, $height, $type, $size) = array_pad($imagesize, 4, '');
+            if (!is_array($imagesize)) {
+                $imagesize = array();
+            }
+            list($width, $height,, $size) = array_pad($imagesize, 4, '');
 
             $data[] = array (
                 'url' => $this->getBaseUrl() . $images_path . pathinfo($path, PATHINFO_BASENAME),
@@ -97,4 +107,3 @@ class PicoPagesImages extends AbstractPicoPlugin
         return $data;
     }
 }
-?>
