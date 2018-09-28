@@ -34,8 +34,8 @@ Example loop with metadata as captions :
 ```html
 {% for image in images %}
     <img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
-    {% if image.metatitle and image.metadesc %}
-        <p>{{ image.metatitle }}<br />{{ image.metadesc }}</p>
+    {% if image.meta %}
+        <p>{{ image.meta.title }}<br />{{ image.meta.description }}</p>
     {% endif %}
 {% endfor %}
 ```
@@ -51,8 +51,8 @@ Data | Example
 `image.width` | 800
 `image.height` | 600
 `image.size` | width="800" height="600"
-`image.metatitle` | Fido Playing with his Bone
-`image.metadesc` | The other day, Fido got a new bone, and he became really captivated by it.
+`image.meta.title` | Fido Playing with his Bone
+`image.meta.description` | The other day, Fido got a new bone, and he became really captivated by it.
 
 ## Files location
 
