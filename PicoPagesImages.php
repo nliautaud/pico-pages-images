@@ -8,9 +8,6 @@
  * @link    http://nliautaud.fr
  * @link    http://picocms.org
  */
-
-use Symfony\Component\Yaml\Yaml;
-
 class PicoPagesImages extends AbstractPicoPlugin
 {
     const API_VERSION = 2;
@@ -105,7 +102,8 @@ class PicoPagesImages extends AbstractPicoPlugin
             // Find meta files for images if they exist
             $metapath = $path . '.meta.yml';
             if (is_file($metapath)) {
-                $meta = Yaml::parse(file_get_contents($metapath));
+                $yamlparser = $this->getPico()->getYamlParser();
+                $meta = $yamlparser->parse(file_get_contents($metapath));
             }
 
             $data[] = array (
@@ -116,8 +114,7 @@ class PicoPagesImages extends AbstractPicoPlugin
                 'width' => $width,
                 'height' => $height,
                 'size' => $size,
-                'metatitle' => isset($meta['title']) ? $meta['title'] : '',
-                'metadesc' => isset($meta['description']) ? $meta['description'] : ''
+                'meta' => $meta
             );
 
 
