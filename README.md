@@ -17,6 +17,7 @@ Example of using a loop :
     <img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
 {% endfor %}
 ```
+
 An image corresponding to the page `http://mysite.com/foo/bar` may contain the following data :
 
 Data | Example
