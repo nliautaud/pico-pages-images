@@ -17,29 +17,6 @@ Example of using a loop :
     <img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
 {% endfor %}
 ```
-
-### Adding metadata captions
-
-Create a YAML file in the same directory as the image and append `.meta.yml` to the image filename. 
-
-For example: `bar-image_01.jpg.meta.yml`
-
-```yml
-title: Fido Playing with his Bone
-description: The other day, Fido got a new bone, and he became really captivated by it.
-```
-
-Example loop with metadata as captions :
-
-```html
-{% for image in images %}
-    <img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
-    {% if image.meta %}
-        <p>{{ image.meta.title }}<br />{{ image.meta.description }}</p>
-    {% endif %}
-{% endfor %}
-```
-
 An image corresponding to the page `http://mysite.com/foo/bar` may contain the following data :
 
 Data | Example
@@ -51,8 +28,7 @@ Data | Example
 `image.width` | 800
 `image.height` | 600
 `image.size` | width="800" height="600"
-`image.meta.title` | Fido Playing with his Bone
-`image.meta.description` | The other day, Fido got a new bone, and he became really captivated by it.
+`image.meta` | [See below](#files-metadata)
 
 ## Files location
 
@@ -79,4 +55,31 @@ If you want to use your `content/` directory as the images path  you must also a
 ```
 # Allow loading images
 RewriteRule ^.*\.(gif|jpe?g|png|webp)$ - [NC,L]
+```
+
+## Files metadata
+
+You can add any metadata to an image by creating a `.meta.yml` YAML file with the same name next to it.
+
+    images/
+        bar-image_01.jpg
+        bar-image_01.jpg.meta.yml
+
+You could for example store titles, dates and descriptions to be used as image captions in your theme.
+
+```yml
+title: Fido Playing with his Bone
+year: 2018
+description: The other day, Fido got a new bone, and he became really captivated by it.
+```
+
+Example loop with metadata captions :
+
+```html
+{% for image in images %}
+    <img src="{{ image.url }}" alt="{{ image.name }}" {{ image.size }}>
+    {% if image.meta %}
+        <p>{{ image.meta.title }} ({{ image.meta.year }})<br />{{ image.meta.description }}</p>
+    {% endif %}
+{% endfor %}
 ```
