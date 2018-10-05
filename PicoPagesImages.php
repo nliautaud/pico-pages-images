@@ -1,6 +1,7 @@
 <?php
 /**
  * Get the images of the current page with {{ images }} in Pico CMS.
+ * Edited September 2018 by Brian Goncalves
  *
  * @author  Nicolas Liautaud <contact@nliautaud.fr>
  * @license http://opensource.org/licenses/MIT The MIT License
@@ -68,6 +69,7 @@ class PicoPagesImages extends AbstractPicoPlugin
      */
     public function onPageRendering(&$templateName, array &$twigVariables)
     {
+        // Create images array
         $twigVariables['images'] = $this->getImages();
     }
     /**
@@ -78,10 +80,13 @@ class PicoPagesImages extends AbstractPicoPlugin
     private function getImages()
     {
         $images_path = $this->root . $this->path;
+        // Filter images path for extra slashes
+        $images_path = preg_replace('/(\/+)/','/',$images_path);
 
         $data = array();
         $pattern = '*.{[jJ][pP][gG],[jJ][pP][eE][gG],[pP][nN][gG],[gG][iI][fF]}';
         $images = glob($images_path . $pattern, GLOB_BRACE);
+        $meta = array();
 
         if (!is_array($images)) {
             return array();
@@ -94,6 +99,13 @@ class PicoPagesImages extends AbstractPicoPlugin
             }
             list($width, $height,, $size) = array_pad($imagesize, 4, '');
 
+            // Find meta files for images if they exist
+            $metapath = $path . '.meta.yml';
+            if (is_file($metapath)) {
+                $yamlparser = $this->getPico()->getYamlParser();
+                $meta = $yamlparser->parse(file_get_contents($metapath));
+            }
+
             $data[] = array (
                 'url' => $this->getBaseUrl() . $images_path . pathinfo($path, PATHINFO_BASENAME),
                 'path' => $images_path,
@@ -101,8 +113,11 @@ class PicoPagesImages extends AbstractPicoPlugin
                 'ext' => pathinfo($path, PATHINFO_EXTENSION),
                 'width' => $width,
                 'height' => $height,
-                'size' => $size
+                'size' => $size,
+                'meta' => $meta
             );
+
+
         }
         return $data;
     }
